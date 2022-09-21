@@ -1,0 +1,21 @@
+{
+  "name": "heattle",
+  "version": "1.0.0",
+  "description": "Data Visualization of Hot Days over time",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "process": "ts-node ./data/processData.ts"
+  },
+  "author": "Dan Arrington",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.7.18",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.3"
+  },
+  "dependencies": {
+    "csv": "^6.2.0",
+    "csv-parse": "^5.3.0"
+  }
+}
