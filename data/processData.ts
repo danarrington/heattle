@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { parse } from "csv-parse";
-import { resourceLimits } from "worker_threads";
+import { parse } from "csv-parse/sync";
 
 type RawDailyTemperature = {
   Station: string;
@@ -19,30 +18,35 @@ type ProcessedResult = {
 
 // Results: {results: [{year:1990, temps:[80, 80]}]}
 const YEAR_TO_START = 1990;
+const main = () => {
+  const fileContent = readFile("3080677.csv");
+  const result = parseFile(fileContent);
+  something(result);
+};
 
-(() => {
-  const csvFilePath = path.resolve(__dirname, "3080677.csv");
+const readFile = (filename: string): string => {
+  const csvFilePath = path.resolve(__dirname, filename);
+  return fs.readFileSync(csvFilePath, { encoding: "utf-8" });
+};
 
+const parseFile = (fileContent: string) => {
   const headers = ["Station", "Name", "Date", "TAVG", "TMAX", "TMIN"];
+  const options = {
+    delimiter: ",",
+    columns: headers,
+    from_line: 2,
+  };
 
-  const fileContent = fs.readFileSync(csvFilePath, { encoding: "utf-8" });
-
-  parse(
-    fileContent,
-    {
-      delimiter: ",",
-      columns: headers,
-    },
-    (error, result: RawDailyTemperature[]) => {
-      if (error) {
-        console.error(error);
-      }
-
-      // console.log("Result", result);
-      something(result);
-    }
-  );
-})();
+  return parse(fileContent, options) as RawDailyTemperature[];
+  // parse(fileContent, options, (error, res: RawDailyTemperature[]) => {
+  //   if (error) {
+  //     console.error(error);
+  //   }
+  //   something(res);
+  //   result = res;
+  // });
+  // return result;
+};
 
 const something = (result: RawDailyTemperature[]) => {
   const dataStructure: ProcessedResult[] = [];
@@ -101,3 +105,5 @@ const printResults = (dataStructure: ProcessedResult[]) => {
     console.log(nums);
   }
 };
+
+main();
