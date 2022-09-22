@@ -11,17 +11,19 @@ type RawDailyTemperature = {
   TMIN: string;
 };
 
-type ProcessedResult = {
-  Year: number;
-  HotDays: number[];
+type YearlyTemperatures = {
+  year: number;
+  hotDays: number[];
 };
 
-// Results: {results: [{year:1990, temps:[80, 80]}]}
 const YEAR_TO_START = 1990;
+const HOT_DAY_THRESHOLD = 80;
+
 const main = () => {
   const fileContent = readFile("3080677.csv");
-  const result = parseFile(fileContent);
-  something(result);
+  const rawResults = parseFile(fileContent);
+  const yearlyTemps = processResults(rawResults);
+  printResults(yearlyTemps);
 };
 
 const readFile = (filename: string): string => {
@@ -38,50 +40,40 @@ const parseFile = (fileContent: string) => {
   };
 
   return parse(fileContent, options) as RawDailyTemperature[];
-  // parse(fileContent, options, (error, res: RawDailyTemperature[]) => {
-  //   if (error) {
-  //     console.error(error);
-  //   }
-  //   something(res);
-  //   result = res;
-  // });
-  // return result;
 };
 
-const something = (result: RawDailyTemperature[]) => {
-  const dataStructure: ProcessedResult[] = [];
+const processResults = (dailyTemps: RawDailyTemperature[]) => {
+  const yearlyTemps: YearlyTemperatures[] = [];
 
   const findOrAddYear = (year: number) => {
-    for (const pr of dataStructure) {
-      if (pr.Year == year) return pr;
-    }
-    const pr: ProcessedResult = {
-      Year: year,
-      HotDays: [],
+    const existingEntry = yearlyTemps.find((yt) => yt.year == year);
+    if (existingEntry) return existingEntry;
+
+    const newYear: YearlyTemperatures = {
+      year: year,
+      hotDays: [],
     };
-    dataStructure.push(pr);
-    return pr;
+    yearlyTemps.push(newYear);
+    return newYear;
   };
 
-  console.log(result.length);
-
-  for (const day of result) {
+  for (const day of dailyTemps) {
     const date = new Date(day.Date);
     if (date.getFullYear() < YEAR_TO_START) continue;
 
-    const pr = findOrAddYear(date.getFullYear());
+    const yearlyTemps = findOrAddYear(date.getFullYear());
     const temp = Number(day.TMAX);
-    if (temp > 80) {
-      pr.HotDays.push(temp);
+    if (temp > HOT_DAY_THRESHOLD) {
+      yearlyTemps.hotDays.push(temp);
     }
   }
 
-  printResults(dataStructure);
+  return yearlyTemps;
 };
 
-const printResults = (dataStructure: ProcessedResult[]) => {
+const printResults = (dataStructure: YearlyTemperatures[]) => {
   for (const result of dataStructure) {
-    console.log(result.Year);
+    console.log(result.year);
     const nums = {
       80: 0,
       85: 0,
@@ -89,7 +81,7 @@ const printResults = (dataStructure: ProcessedResult[]) => {
       95: 0,
       100: 0,
     };
-    for (const temp of result.HotDays) {
+    for (const temp of result.hotDays) {
       if (temp > 100) {
         nums[100]++;
       } else if (temp > 95) {
