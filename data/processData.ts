@@ -23,7 +23,7 @@ const main = () => {
   const fileContent = readFile("3080677.csv");
   const rawResults = parseFile(fileContent);
   const yearlyTemps = processResults(rawResults);
-  printResults(yearlyTemps);
+  writeResults(yearlyTemps, "seattle-data-1990.json");
 };
 
 const readFile = (filename: string): string => {
@@ -69,6 +69,15 @@ const processResults = (dailyTemps: RawDailyTemperature[]) => {
   }
 
   return yearlyTemps;
+};
+
+const writeResults = (yearlyTemps: YearlyTemperatures[], filename: string) => {
+  const outputPath = path.resolve(__dirname, filename);
+  fs.writeFile(outputPath, JSON.stringify(yearlyTemps), (error) => {
+    if (error) {
+      console.log("ERROR Writing File: ", error);
+    }
+  });
 };
 
 const printResults = (dataStructure: YearlyTemperatures[]) => {
