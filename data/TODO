@@ -1,1 +1,19 @@
 https://www.ncei.noaa.gov/cdo-web/confirmation
+
+Script:
+  ✔ Create a script that processes data @done(22-09-22 06:14)
+  ✔ And writes the data to a file @done(22-09-22 06:29)
+
+Express:
+  ✔ Get express setup @done(22-09-22 06:35)
+  ☐ Serve an html file
+  ☐ Run some js on it
+  ☐ Serve and read the data file
+  ☐ Add some css
+
+Non animated on a timer:
+Animation / Styling:
+
+HouseKeeping:
+  ☐ Add a README
+  ☐ Push to Github
