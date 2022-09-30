@@ -6,12 +6,25 @@ Script:
 
 Express:
   ✔ Get express setup @done(22-09-22 06:35)
-  ☐ Serve an html file
-  ☐ Run some js on it
-  ☐ Serve and read the data file
-  ☐ Add some css
+  ✔ Serve an html file @done(22-09-22 06:44)
+  ✔ Run some js on it @done(22-09-22 06:44)
+  ✔ Serve and read the data file @done(22-09-28 06:36)
+  ✔ Add some css @done(22-09-28 06:36)
 
 Non animated on a timer:
+  Draw Year One Chart:  
+    ✔ Set viewport and reasonable max-width @done(22-09-29 06:33)
+    ✔ Add a canvas @done(22-09-29 06:42)
+    ✔ Put any shape on the canvas @done(22-09-29 06:44)
+    ✔ Add datapoints for year one to canvas @done(22-09-29 21:26)
+    ✔ Clean up math so it's less hard coded @done(22-09-30 06:41)
+    ☐ Add x and y axis / labels to canvas
+
+  Add Year One to Timeline:
+
+  Add New years on Timer:
+
+
 Animation / Styling:
 
 HouseKeeping:
