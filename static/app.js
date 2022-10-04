@@ -2,9 +2,10 @@ console.log("runnin some js!");
 
 const CHART_CONFIG = {
   ranges: [80, 85, 90, 95, 100],
-  barWidth: 12,
+  barWidth: 11,
   height: 150,
   width: 300,
+  axisPadding: 24,
 };
 
 const fetchData = async () => {
@@ -21,7 +22,7 @@ const main = async () => {
     drawYear(year);
     await new Promise((r) => setTimeout(r, 500));
   }
-  // drawYear(data[0]);
+  // drawYear(data[1]);
 };
 
 const drawYear = (year) => {
@@ -31,10 +32,36 @@ const drawYear = (year) => {
   ctx.clearRect(0, 0, c.width, c.height);
 
   var c = (document.getElementById("yearTitle").textContent = year.year);
+  drawAxis(ctx);
 
   const aggregatedData = aggregateYearData(year);
   for (const [key, value] of Object.entries(aggregatedData)) {
     drawTempValue(key, value);
+  }
+};
+
+const drawAxis = (chart) => {
+  const { axisPadding, height, ranges, barWidth } = CHART_CONFIG;
+
+  chart.beginPath();
+  chart.moveTo(axisPadding, height - axisPadding);
+  chart.lineTo(300, height - axisPadding);
+  chart.moveTo(axisPadding, 0);
+  chart.lineTo(axisPadding, height - axisPadding);
+  chart.stroke();
+
+  chart.font = "12px sans-serif";
+  for (let i = 0; i < ranges.length; i++) {
+    chart.fillText(ranges[i], axisPadding + 20 + i * 5 * barWidth, height - 5);
+  }
+  const yLabels = [0, 5, 10, 15, 20];
+  for (let i = 0; i < yLabels.length; i++) {
+    const offsetToCenterText = 5;
+    const y = height - axisPadding - 5 * yLabels[i];
+    chart.fillText(yLabels[i], 0, y + offsetToCenterText);
+    chart.moveTo(axisPadding - 5, y);
+    chart.lineTo(axisPadding, y);
+    chart.stroke();
   }
 };
 
@@ -64,24 +91,19 @@ const aggregateYearData = (year) => {
   return nums;
 };
 
-// 80 : 0, 60
-// 85 : 60, 60
-// 20 : 0
-// 10 : 75
-// 0 : 150 150 - count*7.5
-
 const drawTempValue = (temp, count) => {
-  console.log(`Drawing ${temp} : ${count}`);
   if (count == 0) return;
 
-  const x = Math.abs(CHART_CONFIG.ranges[0] - temp) * CHART_CONFIG.barWidth;
-  const y = CHART_CONFIG.height - count * 5;
-  const height = CHART_CONFIG.height - y;
+  const { axisPadding, height: chartHeight, barWidth, ranges } = CHART_CONFIG;
+
+  const x = Math.abs(ranges[0] - temp) * barWidth + axisPadding;
+  const y = chartHeight - count * 5 - axisPadding;
+  const shapeHeight = chartHeight - y - axisPadding;
   var c = document.getElementById("chart");
   var ctx = c.getContext("2d");
 
   ctx.beginPath();
-  ctx.rect(x, y, 60, height);
+  ctx.rect(x, y, barWidth * 5, shapeHeight);
   ctx.stroke();
 };
 
