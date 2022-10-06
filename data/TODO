@@ -18,11 +18,16 @@ Non animated on a timer:
     ✔ Put any shape on the canvas @done(22-09-29 06:44)
     ✔ Add datapoints for year one to canvas @done(22-09-29 21:26)
     ✔ Clean up math so it's less hard coded @done(22-09-30 06:41)
-    ☐ Add x and y axis / labels to canvas
+    ✔ Add x and y axis / labels to canvas @done(22-10-04 06:48)
 
-  Add Year One to Timeline:
+  Timeline:
+    ☐ Create a new canvas for timeline
+    ☐ Draw a single year in black/white (just lines)
+    ☐ Shade the segments
+    ☐ Add the first year after it's displayed on chart
+    ☐ Draw a second year and move the first one
+    ☐ Draw all of them with the timer
 
-  Add New years on Timer:
 
 
 Animation / Styling:

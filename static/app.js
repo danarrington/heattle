@@ -1,5 +1,3 @@
-console.log("runnin some js!");
-
 const CHART_CONFIG = {
   ranges: [80, 85, 90, 95, 100],
   barWidth: 11,
@@ -15,27 +13,30 @@ const fetchData = async () => {
 };
 
 const main = async () => {
-  const data = await fetchData();
-  console.log(data.length);
+  const rawData = await fetchData();
+  const aggregatedData = aggregateData(rawData);
 
-  for (const year of data) {
-    drawYear(year);
+  for (const year of aggregatedData) {
+    addYear(year);
     await new Promise((r) => setTimeout(r, 500));
   }
-  // drawYear(data[1]);
+  // addYear(data[1]);
 };
 
-const drawYear = (year) => {
-  console.log(`drawYear ${year.year}`);
+const addYear = (yearData) => {
+  addYearToChart(yearData.year, yearData.aggregatedTemps);
+  addYearToTimeline(yearData.year, yearData.aggregatedTemps);
+};
+
+const addYearToChart = (year, aggregatedTemps) => {
   var c = document.getElementById("chart");
   var ctx = c.getContext("2d");
   ctx.clearRect(0, 0, c.width, c.height);
 
-  var c = (document.getElementById("yearTitle").textContent = year.year);
+  var c = (document.getElementById("yearTitle").textContent = year);
   drawAxis(ctx);
 
-  const aggregatedData = aggregateYearData(year);
-  for (const [key, value] of Object.entries(aggregatedData)) {
+  for (const [key, value] of Object.entries(aggregatedTemps)) {
     drawTempValue(key, value);
   }
 };
@@ -65,7 +66,16 @@ const drawAxis = (chart) => {
   }
 };
 
-const aggregateYearData = (year) => {
+const aggregateData = (rawData) => {
+  const res = [];
+  for (const yearData of rawData) {
+    const aggregatedTemps = aggregateYearData(yearData.hotDays);
+    res.push({ aggregatedTemps, year: yearData.year });
+  }
+  return res;
+};
+
+const aggregateYearData = (temps) => {
   const nums = {
     80: 0,
     85: 0,
@@ -74,7 +84,7 @@ const aggregateYearData = (year) => {
     100: 0,
   };
 
-  for (const temp of year.hotDays) {
+  for (const temp of temps) {
     if (temp > 100) {
       nums[100]++;
     } else if (temp > 95) {
@@ -105,6 +115,34 @@ const drawTempValue = (temp, count) => {
   ctx.beginPath();
   ctx.rect(x, y, barWidth * 5, shapeHeight);
   ctx.stroke();
+};
+
+/************ TIMELINE *************/
+addYearToTimeline = (year, aggregatedTemps) => {
+  var c = document.getElementById("timeline");
+  var ctx = c.getContext("2d");
+
+  ctx.font = "12px sans-serif";
+  ctx.fillStyle = "black";
+
+  let y = Math.abs(1990 - year) * 15;
+  ctx.fillText(year, 0, 10 + y);
+
+  const colors = {
+    80: "#fff33b",
+    85: "#fdc70c",
+    90: "#f3903f",
+    95: "#ed683c",
+    100: "#e93e3a",
+  };
+
+  let x = 35;
+  for (const [key, value] of Object.entries(aggregatedTemps)) {
+    const width = 5 * value;
+    ctx.fillStyle = colors[key];
+    ctx.fillRect(x, y, width, 10);
+    x = x + width;
+  }
 };
 
 main();
