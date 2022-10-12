@@ -21,13 +21,19 @@ Non animated on a timer:
     ✔ Add x and y axis / labels to canvas @done(22-10-04 06:48)
 
   Timeline:
-    ☐ Create a new canvas for timeline
-    ☐ Draw a single year in black/white (just lines)
-    ☐ Shade the segments
-    ☐ Add the first year after it's displayed on chart
-    ☐ Draw a second year and move the first one
-    ☐ Draw all of them with the timer
+    ✔ Create a new canvas for timeline @done(22-10-05 06:30)
+    ✔ Draw a single year in black/white (just lines) @done(22-10-05 06:30)
+    ✔ Shade the segments @done(22-10-05 06:30)
 
+  Typescript and Bundling:
+    ✔ Research simplest option that can handle TS and multiple files @done(22-10-11 21:21)
+      - ESBuild
+    ✔ Add a second file @done(22-10-11 06:40)
+    ✔ Re-orginize server/client files @done(22-10-11 20:54)
+    ✔ Add some TS @done(22-10-11 21:20)
+      ✔ Add tsconfig @done(22-10-11 21:20)
+    ✔ Wire up watch mode @done(22-10-11 21:20)
+    ✔ Finish typing @done(22-10-12 06:39)
 
 
 Animation / Styling:
@@ -35,3 +41,12 @@ Animation / Styling:
 HouseKeeping:
   ☐ Add a README
   ☐ Push to Github
+
+
+Animation Thoughts:
+  - Both return a promise, we await both of them, that keeps them in sync?
+  - Keep a 'global' object of timeline shapes, these are objects with positions
+  - When you add a new timeline box, add it to this shapes object and animate all existing ones down
+
+Gold Plating:
+  ☐ Linting

@@ -28,43 +28,24 @@
     });
   };
 
-  // client/canvas.ts
-  var getCanvas;
-  var init_canvas = __esm({
-    "client/canvas.ts"() {
-      "use strict";
-      getCanvas = (elementId) => {
-        const canvas = document.getElementById(elementId);
-        const ctx = canvas.getContext("2d");
-        return {
-          canvas,
-          ctx
-        };
-      };
-    }
-  });
-
-  // client/timeline.ts
+  // static/timeline.ts
   var addYearToTimeline;
   var init_timeline = __esm({
-    "client/timeline.ts"() {
+    "static/timeline.ts"() {
       "use strict";
-      init_canvas();
-      addYearToTimeline = ({
-        year,
-        aggregatedTemps
-      }) => {
-        const { ctx } = getCanvas("timeline");
+      addYearToTimeline = (year, aggregatedTemps) => {
+        var c = document.getElementById("timeline");
+        var ctx = c.getContext("2d");
         ctx.font = "12px sans-serif";
         ctx.fillStyle = "black";
         let y = Math.abs(1990 - year) * 15;
-        ctx.fillText(String(year), 0, 10 + y);
+        ctx.fillText(year, 0, 10 + y);
         const colors = {
-          "80": "#fff33b",
-          "85": "#fdc70c",
-          "90": "#f3903f",
-          "95": "#ed683c",
-          "100": "#e93e3a"
+          80: "#fff33b",
+          85: "#fdc70c",
+          90: "#f3903f",
+          95: "#ed683c",
+          100: "#e93e3a"
         };
         let x = 35;
         for (const [key, value] of Object.entries(aggregatedTemps)) {
@@ -77,10 +58,9 @@
     }
   });
 
-  // client/app.ts
+  // static/app.js
   var require_app = __commonJS({
-    "client/app.ts"(exports) {
-      init_canvas();
+    "static/app.js"(exports) {
       init_timeline();
       var CHART_CONFIG = {
         ranges: [80, 85, 90, 95, 100],
@@ -100,24 +80,18 @@
         addYear(aggregatedData[1]);
       });
       var addYear = (yearData) => {
-        addYearToChart(yearData);
-        addYearToTimeline(yearData);
+        addYearToChart(yearData.year, yearData.aggregatedTemps);
+        addYearToTimeline(yearData.year, yearData.aggregatedTemps);
       };
-      var addYearToChart = ({ year, aggregatedTemps }) => {
-        const { canvas, ctx } = getCanvas("chart");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        updateTitle(String(year));
+      var addYearToChart = (year, aggregatedTemps) => {
+        var c = document.getElementById("chart");
+        var ctx = c.getContext("2d");
+        ctx.clearRect(0, 0, c.width, c.height);
+        var c = document.getElementById("yearTitle").textContent = year;
         drawAxis(ctx);
         for (const [key, value] of Object.entries(aggregatedTemps)) {
-          drawTempValue(Number(key), value);
+          drawTempValue(key, value);
         }
-      };
-      var updateTitle = (title) => {
-        const titleElement = document.getElementById("yearTitle");
-        if (!titleElement) {
-          return;
-        }
-        titleElement.textContent = title;
       };
       var drawAxis = (chart) => {
         const { axisPadding, height, ranges, barWidth } = CHART_CONFIG;
@@ -129,17 +103,13 @@
         chart.stroke();
         chart.font = "12px sans-serif";
         for (let i = 0; i < ranges.length; i++) {
-          chart.fillText(
-            String(ranges[i]),
-            axisPadding + 20 + i * 5 * barWidth,
-            height - 5
-          );
+          chart.fillText(ranges[i], axisPadding + 20 + i * 5 * barWidth, height - 5);
         }
         const yLabels = [0, 5, 10, 15, 20];
         for (let i = 0; i < yLabels.length; i++) {
           const offsetToCenterText = 5;
           const y = height - axisPadding - 5 * yLabels[i];
-          chart.fillText(String(yLabels[i]), 0, y + offsetToCenterText);
+          chart.fillText(yLabels[i], 0, y + offsetToCenterText);
           chart.moveTo(axisPadding - 5, y);
           chart.lineTo(axisPadding, y);
           chart.stroke();
@@ -180,10 +150,11 @@
         if (count == 0)
           return;
         const { axisPadding, height: chartHeight, barWidth, ranges } = CHART_CONFIG;
-        const { ctx } = getCanvas("chart");
         const x = Math.abs(ranges[0] - temp) * barWidth + axisPadding;
         const y = chartHeight - count * 5 - axisPadding;
         const shapeHeight = chartHeight - y - axisPadding;
+        var c = document.getElementById("chart");
+        var ctx = c.getContext("2d");
         ctx.beginPath();
         ctx.rect(x, y, barWidth * 5, shapeHeight);
         ctx.stroke();
