@@ -1,8 +1,9 @@
+import { animateRectangle } from "./animate";
 import { CHART_CONFIG } from "./app";
 import { getCanvas } from "./canvas";
 import { aggregatedYearlyTemps } from "./types";
 
-export const addYearToChart = ({
+export const addYearToChart = async ({
   year,
   aggregatedTemps,
 }: aggregatedYearlyTemps) => {
@@ -12,9 +13,11 @@ export const addYearToChart = ({
   updateTitle(String(year));
   drawAxis(ctx);
 
+  const promises = [];
   for (const [key, value] of Object.entries(aggregatedTemps)) {
-    drawTempValue(Number(key), value);
+    promises.push(drawTempValue(Number(key), value));
   }
+  return Promise.all(promises);
 };
 
 const updateTitle = (title: string) => {
@@ -53,7 +56,7 @@ const drawAxis = (chart: CanvasRenderingContext2D) => {
     chart.stroke();
   }
 };
-const drawTempValue = (temp: number, count: number) => {
+const drawTempValue = async (temp: number, count: number) => {
   if (count == 0) return;
 
   const { axisPadding, height: chartHeight, barWidth, ranges } = CHART_CONFIG;
@@ -63,7 +66,15 @@ const drawTempValue = (temp: number, count: number) => {
   const y = chartHeight - count * 5 - axisPadding;
   const shapeHeight = chartHeight - y - axisPadding;
 
-  ctx.beginPath();
-  ctx.rect(x, y, barWidth * 5, shapeHeight);
-  ctx.stroke();
+  await animateRectangle({
+    x0: x,
+    y0: 0,
+    x1: x,
+    y1: y,
+    height: shapeHeight,
+    width: barWidth * 5,
+    color: "#ccc",
+    durationMs: 1000,
+    ctx,
+  });
 };

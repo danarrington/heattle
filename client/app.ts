@@ -24,11 +24,11 @@ const main = async () => {
   //   addYear(year);
   //   await new Promise((r) => setTimeout(r, 500));
   // }
-  addYear(aggregatedData[1]);
+  await addYear(aggregatedData[1]);
 };
 
-const addYear = (yearData: aggregatedYearlyTemps) => {
-  addYearToChart(yearData);
+const addYear = async (yearData: aggregatedYearlyTemps) => {
+  await addYearToChart(yearData);
   addYearToTimeline(yearData);
 };
 
