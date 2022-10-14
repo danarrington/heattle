@@ -36,14 +36,18 @@ Non animated on a timer:
     ✔ Finish typing @done(22-10-12 06:39)
 
 
-Animation / Styling:
+Animation:
   ✔ Create animation function @done(22-10-13 06:40)
   ✔ Simple two frame animation for chart @done(22-10-13 06:40)
-  ☐ Animate chart in a non-blocking loop w/ clearing
-  ☐ Promise.all correctly so it's non-blocking
-  ☐ Add simple animation loop to timeline
-  ☐ Syncronize them
+  ✔ Animate chart in a non-blocking loop w/ clearing @done(22-10-14 06:39)
+  ✔ Promise.all correctly so it's non-blocking @done(22-10-14 06:39)
+  - Run into problem w/ animation/clearing 
+  ✔ Refactor drawTemp to return an object w/ start/end @done(22-10-14 14:58)
+  ✔ Animate entire chart in single loop/promise @done(22-10-14 14:58)
+  ✔ Color chart @done(22-10-14 15:17)
+  ☐ Start on timeline animation
 
+Styling:
 
 HouseKeeping:
   ☐ Add a README
@@ -54,6 +58,12 @@ Animation Thoughts:
   - Both return a promise, we await both of them, that keeps them in sync?
   - Keep a 'global' object of timeline shapes, these are objects with positions
   - When you add a new timeline box, add it to this shapes object and animate all existing ones down
+
+Animation thoughts Pt 2:
+  - When we loop the aggregated temps instead of drawing them, we need to construct
+    - object of (x0,x1,y0,y1,width,height)
+  - Now that we have all our 'intented animations' we can loop where we 
+    - draw axis, draw 'frame' of all boxes, sleep, clear
 
 Gold Plating:
   ☐ Linting

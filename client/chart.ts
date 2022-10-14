@@ -1,4 +1,5 @@
-import { animateRectangle } from "./animate";
+import { createContext } from "vm";
+import { AnimateableRectangle, animateRectangles } from "./animate";
 import { CHART_CONFIG } from "./app";
 import { getCanvas } from "./canvas";
 import { aggregatedYearlyTemps } from "./types";
@@ -7,17 +8,50 @@ export const addYearToChart = async ({
   year,
   aggregatedTemps,
 }: aggregatedYearlyTemps) => {
-  const { canvas, ctx } = getCanvas("chart");
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const canvas = getCanvas("chart");
+  canvas.clear();
 
   updateTitle(String(year));
-  drawAxis(ctx);
+  drawAxis(canvas.ctx);
 
-  const promises = [];
-  for (const [key, value] of Object.entries(aggregatedTemps)) {
-    promises.push(drawTempValue(Number(key), value));
+  const recs: AnimateableRectangle[] = [];
+  for (const [temp, count] of Object.entries(aggregatedTemps)) {
+    const bar = buildTempBar(Number(temp), count);
+    if (bar) recs.push(bar);
   }
-  return Promise.all(promises);
+  await animateRectangles({ recs, durationMs: 300, canvas });
+};
+
+const buildTempBar = (
+  temp: number,
+  count: number
+): AnimateableRectangle | void => {
+  if (count == 0) return;
+
+  const { axisPadding, height: chartHeight, barWidth, ranges } = CHART_CONFIG;
+
+  const x = Math.abs(ranges[0] - temp) * barWidth + axisPadding;
+  const y = chartHeight - count * 5 - axisPadding;
+  const shapeHeight = chartHeight - y - axisPadding;
+
+  const colors = {
+    "80": "#fff33b",
+    "85": "#fdc70c",
+    "90": "#f3903f",
+    "95": "#ed683c",
+    "100": "#e93e3a",
+  };
+  return {
+    x0: x,
+    // y0: -shapeHeight,
+    y0: -chartHeight,
+    x1: x,
+    y1: y,
+    height: shapeHeight,
+    width: barWidth * 5,
+    //@ts-ignore
+    color: colors[temp],
+  };
 };
 
 const updateTitle = (title: string) => {
@@ -31,6 +65,7 @@ const updateTitle = (title: string) => {
 const drawAxis = (chart: CanvasRenderingContext2D) => {
   const { axisPadding, height, ranges, barWidth } = CHART_CONFIG;
 
+  chart.fillStyle = "black";
   chart.beginPath();
   chart.moveTo(axisPadding, height - axisPadding);
   chart.lineTo(300, height - axisPadding);
@@ -55,26 +90,4 @@ const drawAxis = (chart: CanvasRenderingContext2D) => {
     chart.lineTo(axisPadding, y);
     chart.stroke();
   }
-};
-const drawTempValue = async (temp: number, count: number) => {
-  if (count == 0) return;
-
-  const { axisPadding, height: chartHeight, barWidth, ranges } = CHART_CONFIG;
-  const { ctx } = getCanvas("chart");
-
-  const x = Math.abs(ranges[0] - temp) * barWidth + axisPadding;
-  const y = chartHeight - count * 5 - axisPadding;
-  const shapeHeight = chartHeight - y - axisPadding;
-
-  await animateRectangle({
-    x0: x,
-    y0: 0,
-    x1: x,
-    y1: y,
-    height: shapeHeight,
-    width: barWidth * 5,
-    color: "#ccc",
-    durationMs: 1000,
-    ctx,
-  });
 };

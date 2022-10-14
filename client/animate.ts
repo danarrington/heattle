@@ -1,13 +1,18 @@
-export type AnimateRectangleOptions = {
+import { Canvas } from "./canvas";
+
+export type AnimateableRectangle = {
   x0: number;
   x1: number;
   y0: number;
   y1: number;
   height: number;
   width: number;
+  color?: string;
+};
+export type AnimateRectanglesOptions = {
+  recs: AnimateableRectangle[];
   durationMs: number;
-  color: string;
-  ctx: CanvasRenderingContext2D;
+  canvas: Canvas;
 };
 type DrawRectangleOptions = {
   x: number;
@@ -17,32 +22,33 @@ type DrawRectangleOptions = {
   ctx: CanvasRenderingContext2D;
 };
 
-export const animateRectangle = async ({
-  x0,
-  x1,
-  y0,
-  y1,
-  width,
-  height,
+export const animateRectangles = async ({
+  recs,
   durationMs,
-  ctx,
-}: AnimateRectangleOptions): Promise<void> => {
-  ctx.beginPath();
-  ctx.rect(x0, y0, width, height);
-  ctx.stroke();
-  console.log("start");
-  return new Promise((resolve) => {
-    setTimeout(resolve, durationMs);
-  }).then(() => {
-    console.log("then");
-    ctx.beginPath();
-    ctx.rect(x1, y1, width, height);
-    ctx.stroke();
-  });
+  canvas,
+}: AnimateRectanglesOptions): Promise<void> => {
+  const frames = (durationMs / 1000) * 50;
+  for (let i = 0; i <= frames; i++) {
+    canvas.clear();
+    for (const r of recs) {
+      drawRectangleFrame(r, i / frames, canvas);
+    }
+    await new Promise((r) => setTimeout(r, 20));
+  }
+  await new Promise((r) => setTimeout(r, 800));
+  return Promise.resolve();
 };
 
-const drawRectangle = ({ x, y, width, height, ctx }: DrawRectangleOptions) => {
+export const drawRectangleFrame = (
+  r: AnimateableRectangle,
+  percent: number,
+  { ctx }: Canvas
+) => {
+  const x = r.x0 + percent * (r.x1 - r.x0);
+  const y = r.y0 + percent * (r.y1 - r.y0);
   ctx.beginPath();
-  ctx.rect(x, y, width, height);
+  if (r.color) ctx.fillStyle = r.color;
+  ctx.fillRect(x, y, r.width, r.height);
+  ctx.rect(x, y, r.width, r.height);
   ctx.stroke();
 };

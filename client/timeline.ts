@@ -24,9 +24,12 @@ export const addYearToTimeline = ({
   let x = 35;
   for (const [key, value] of Object.entries(aggregatedTemps)) {
     const width = 5 * value;
+    ctx.beginPath();
     //@ts-ignore
     ctx.fillStyle = colors[key];
     ctx.fillRect(x, y, width, 10);
+    ctx.rect(x, y, width, 10);
+    ctx.stroke();
     x = x + width;
   }
 };

@@ -20,11 +20,11 @@ const main = async () => {
   const rawData = await fetchData();
   const aggregatedData = aggregateData(rawData);
 
-  // for (const year of aggregatedData) {
-  //   addYear(year);
-  //   await new Promise((r) => setTimeout(r, 500));
-  // }
-  await addYear(aggregatedData[1]);
+  for (const year of aggregatedData) {
+    await addYear(year);
+    // await new Promise((r) => setTimeout(r, 500));
+  }
+  // await addYear(aggregatedData[1]);
 };
 
 const addYear = async (yearData: aggregatedYearlyTemps) => {
