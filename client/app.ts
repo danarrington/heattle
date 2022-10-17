@@ -8,6 +8,13 @@ export const CHART_CONFIG = {
   height: 150,
   width: 300,
   axisPadding: 24,
+  colors: {
+    "80": "#fff33b",
+    "85": "#fdc70c",
+    "90": "#f3903f",
+    "95": "#ed683c",
+    "100": "#e93e3a",
+  },
 };
 
 const fetchData = async () => {
@@ -20,11 +27,11 @@ const main = async () => {
   const rawData = await fetchData();
   const aggregatedData = aggregateData(rawData);
 
-  for (const year of aggregatedData) {
-    await addYear(year);
-    // await new Promise((r) => setTimeout(r, 500));
-  }
-  // await addYear(aggregatedData[1]);
+  // for (const year of aggregatedData) {
+  //   await addYear(year);
+  // }
+  await addYear(aggregatedData[0]);
+  await addYear(aggregatedData[1]);
 };
 
 const addYear = async (yearData: aggregatedYearlyTemps) => {

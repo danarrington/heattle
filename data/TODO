@@ -46,6 +46,7 @@ Animation:
   ✔ Animate entire chart in single loop/promise @done(22-10-14 14:58)
   ✔ Color chart @done(22-10-14 15:17)
   ☐ Start on timeline animation
+  ☐ Animate bars _off_ chart 
 
 Styling:
 

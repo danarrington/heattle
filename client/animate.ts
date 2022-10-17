@@ -7,7 +7,7 @@ export type AnimateableRectangle = {
   y1: number;
   height: number;
   width: number;
-  color?: string;
+  color: string;
 };
 export type AnimateRectanglesOptions = {
   recs: AnimateableRectangle[];
@@ -47,7 +47,7 @@ export const drawRectangleFrame = (
   const x = r.x0 + percent * (r.x1 - r.x0);
   const y = r.y0 + percent * (r.y1 - r.y0);
   ctx.beginPath();
-  if (r.color) ctx.fillStyle = r.color;
+  ctx.fillStyle = r.color;
   ctx.fillRect(x, y, r.width, r.height);
   ctx.rect(x, y, r.width, r.height);
   ctx.stroke();

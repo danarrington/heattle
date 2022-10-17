@@ -1,4 +1,3 @@
-import { createContext } from "vm";
 import { AnimateableRectangle, animateRectangles } from "./animate";
 import { CHART_CONFIG } from "./app";
 import { getCanvas } from "./canvas";
@@ -28,22 +27,20 @@ const buildTempBar = (
 ): AnimateableRectangle | void => {
   if (count == 0) return;
 
-  const { axisPadding, height: chartHeight, barWidth, ranges } = CHART_CONFIG;
+  const {
+    axisPadding,
+    height: chartHeight,
+    barWidth,
+    ranges,
+    colors,
+  } = CHART_CONFIG;
 
   const x = Math.abs(ranges[0] - temp) * barWidth + axisPadding;
   const y = chartHeight - count * 5 - axisPadding;
   const shapeHeight = chartHeight - y - axisPadding;
 
-  const colors = {
-    "80": "#fff33b",
-    "85": "#fdc70c",
-    "90": "#f3903f",
-    "95": "#ed683c",
-    "100": "#e93e3a",
-  };
   return {
     x0: x,
-    // y0: -shapeHeight,
     y0: -chartHeight,
     x1: x,
     y1: y,
