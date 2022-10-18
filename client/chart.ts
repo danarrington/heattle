@@ -1,4 +1,4 @@
-import { AnimateableRectangle, animateRectangles } from "./animate";
+import { AnimateableShape, animateShapes } from "./animate";
 import { CHART_CONFIG } from "./app";
 import { getCanvas } from "./canvas";
 import { aggregatedYearlyTemps } from "./types";
@@ -13,18 +13,15 @@ export const addYearToChart = async ({
   updateTitle(String(year));
   drawAxis(canvas.ctx);
 
-  const recs: AnimateableRectangle[] = [];
+  const recs: AnimateableShape[] = [];
   for (const [temp, count] of Object.entries(aggregatedTemps)) {
     const bar = buildTempBar(Number(temp), count);
     if (bar) recs.push(bar);
   }
-  await animateRectangles({ recs, durationMs: 300, canvas });
+  await animateShapes({ shapes: recs, durationMs: 300, canvas });
 };
 
-const buildTempBar = (
-  temp: number,
-  count: number
-): AnimateableRectangle | void => {
+const buildTempBar = (temp: number, count: number): AnimateableShape | void => {
   if (count == 0) return;
 
   const {
@@ -37,17 +34,23 @@ const buildTempBar = (
 
   const x = Math.abs(ranges[0] - temp) * barWidth + axisPadding;
   const y = chartHeight - count * 5 - axisPadding;
-  const shapeHeight = chartHeight - y - axisPadding;
+  const height = chartHeight - y - axisPadding;
+  const width = barWidth * 5;
+  //@ts-ignore
+  const color = colors[temp];
 
   return {
     x0: x,
     y0: -chartHeight,
     x1: x,
     y1: y,
-    height: shapeHeight,
-    width: barWidth * 5,
-    //@ts-ignore
-    color: colors[temp],
+    draw: (x, y, ctx) => {
+      ctx.beginPath();
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, width, height);
+      ctx.rect(x, y, width, height);
+      ctx.stroke();
+    },
   };
 };
 
