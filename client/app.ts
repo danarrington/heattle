@@ -27,16 +27,15 @@ const main = async () => {
   const rawData = await fetchData();
   const aggregatedData = aggregateData(rawData);
 
-  // for (const year of aggregatedData) {
-  //   await addYear(year);
-  // }
-  await addYear(aggregatedData[0]);
-  await addYear(aggregatedData[1]);
+  for (const year of aggregatedData) {
+    await addYear(year);
+  }
+  // await addYear(aggregatedData[0]);
+  // await addYear(aggregatedData[1]);
 };
 
 const addYear = async (yearData: aggregatedYearlyTemps) => {
-  await addYearToChart(yearData);
-  addYearToTimeline(yearData);
+  await Promise.all([addYearToChart(yearData), addYearToTimeline(yearData)]);
 };
 
 const aggregateData = (rawData: rawYearlyTemps[]): aggregatedYearlyTemps[] => {

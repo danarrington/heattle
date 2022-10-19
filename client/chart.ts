@@ -1,13 +1,15 @@
 import { AnimateableShape, animateShapes } from "./animate";
 import { CHART_CONFIG } from "./app";
-import { getCanvas } from "./canvas";
+import { getChart } from "./canvas";
 import { aggregatedYearlyTemps } from "./types";
+
+let existingBars: AnimateableShape[] = [];
 
 export const addYearToChart = async ({
   year,
   aggregatedTemps,
 }: aggregatedYearlyTemps) => {
-  const canvas = getCanvas("chart");
+  const canvas = getChart();
   canvas.clear();
 
   updateTitle(String(year));
@@ -18,7 +20,18 @@ export const addYearToChart = async ({
     const bar = buildTempBar(Number(temp), count);
     if (bar) recs.push(bar);
   }
-  await animateShapes({ shapes: recs, durationMs: 300, canvas });
+  // for (const bar of existingBars) {
+  //   bar.y0 = bar.y1;
+  //   bar.y1 = 400;
+  // }
+  const animateOn = animateShapes({ shapes: recs, durationMs: 300, canvas });
+  // const animateOff = animateShapes({
+  //   shapes: existingBars,
+  //   durationMs: 300,
+  //   canvas,
+  // });
+  await Promise.all([animateOn]);
+  // existingBars = recs;
 };
 
 const buildTempBar = (temp: number, count: number): AnimateableShape | void => {

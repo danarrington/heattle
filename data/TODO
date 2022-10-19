@@ -45,14 +45,18 @@ Animation:
   ✔ Refactor drawTemp to return an object w/ start/end @done(22-10-14 14:58)
   ✔ Animate entire chart in single loop/promise @done(22-10-14 14:58)
   ✔ Color chart @done(22-10-14 15:17)
-  ☐ Start on timeline animation
+  ✔ Start on timeline animation @done(22-10-18 06:38)
   ☐ Animate bars _off_ chart 
+  ☐ Syncronize timings
 
 Styling:
 
 HouseKeeping:
   ☐ Add a README
+    - Starting, fetching data
+  ☐ TODOs
   ☐ Push to Github
+  ☐ Deploy
 
 
 Animation Thoughts:
