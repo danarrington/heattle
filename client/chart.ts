@@ -13,25 +13,21 @@ export const addYearToChart = async ({
   canvas.clear();
 
   updateTitle(String(year));
-  drawAxis(canvas.ctx);
 
-  const recs: AnimateableShape[] = [];
+  const animatedBars: AnimateableShape[] = [];
   for (const [temp, count] of Object.entries(aggregatedTemps)) {
     const bar = buildTempBar(Number(temp), count);
-    if (bar) recs.push(bar);
+    if (bar) animatedBars.push(bar);
   }
-  // for (const bar of existingBars) {
-  //   bar.y0 = bar.y1;
-  //   bar.y1 = 400;
-  // }
-  const animateOn = animateShapes({ shapes: recs, durationMs: 300, canvas });
-  // const animateOff = animateShapes({
-  //   shapes: existingBars,
-  //   durationMs: 300,
-  //   canvas,
-  // });
-  await Promise.all([animateOn]);
-  // existingBars = recs;
+
+  animateExistingBarsOffChart(existingBars);
+
+  await animateShapes({
+    shapes: [...animatedBars, ...existingBars],
+    durationMs: 300,
+    canvas,
+  });
+  existingBars = animatedBars;
 };
 
 const buildTempBar = (temp: number, count: number): AnimateableShape | void => {
@@ -45,9 +41,10 @@ const buildTempBar = (temp: number, count: number): AnimateableShape | void => {
     colors,
   } = CHART_CONFIG;
 
+  const drawableArea = chartHeight - axisPadding;
   const x = Math.abs(ranges[0] - temp) * barWidth + axisPadding;
-  const y = chartHeight - count * 5 - axisPadding;
-  const height = chartHeight - y - axisPadding;
+  const y = drawableArea - count * 5;
+  const height = drawableArea - y;
   const width = barWidth * 5;
   //@ts-ignore
   const color = colors[temp];
@@ -58,13 +55,23 @@ const buildTempBar = (temp: number, count: number): AnimateableShape | void => {
     x1: x,
     y1: y,
     draw: (x, y, ctx) => {
+      if (y >= drawableArea) return;
+      const drawableHeight = Math.min(height, drawableArea - y);
       ctx.beginPath();
       ctx.fillStyle = color;
-      ctx.fillRect(x, y, width, height);
-      ctx.rect(x, y, width, height);
+      ctx.fillRect(x, y, width, drawableHeight);
+      ctx.rect(x, y, width, drawableHeight);
       ctx.stroke();
     },
   };
+};
+
+const animateExistingBarsOffChart = (bars: AnimateableShape[]) => {
+  const { axisPadding, height: chartHeight } = CHART_CONFIG;
+  for (const bar of bars) {
+    bar.y0 = bar.y1;
+    bar.y1 = chartHeight - axisPadding;
+  }
 };
 
 const updateTitle = (title: string) => {
@@ -75,20 +82,21 @@ const updateTitle = (title: string) => {
   titleElement.textContent = title;
 };
 
-const drawAxis = (chart: CanvasRenderingContext2D) => {
+export const drawAxis = () => {
   const { axisPadding, height, ranges, barWidth } = CHART_CONFIG;
+  const { ctx } = getChart();
 
-  chart.fillStyle = "black";
-  chart.beginPath();
-  chart.moveTo(axisPadding, height - axisPadding);
-  chart.lineTo(300, height - axisPadding);
-  chart.moveTo(axisPadding, 0);
-  chart.lineTo(axisPadding, height - axisPadding);
-  chart.stroke();
+  ctx.fillStyle = "black";
+  ctx.beginPath();
+  ctx.moveTo(axisPadding, height - axisPadding);
+  ctx.lineTo(300, height - axisPadding);
+  ctx.moveTo(axisPadding, 0);
+  ctx.lineTo(axisPadding, height - axisPadding);
+  ctx.stroke();
 
-  chart.font = "12px sans-serif";
+  ctx.font = "12px sans-serif";
   for (let i = 0; i < ranges.length; i++) {
-    chart.fillText(
+    ctx.fillText(
       String(ranges[i]),
       axisPadding + 20 + i * 5 * barWidth,
       height - 5
@@ -98,9 +106,9 @@ const drawAxis = (chart: CanvasRenderingContext2D) => {
   for (let i = 0; i < yLabels.length; i++) {
     const offsetToCenterText = 5;
     const y = height - axisPadding - 5 * yLabels[i];
-    chart.fillText(String(yLabels[i]), 0, y + offsetToCenterText);
-    chart.moveTo(axisPadding - 5, y);
-    chart.lineTo(axisPadding, y);
-    chart.stroke();
+    ctx.fillText(String(yLabels[i]), 0, y + offsetToCenterText);
+    ctx.moveTo(axisPadding - 5, y);
+    ctx.lineTo(axisPadding, y);
+    ctx.stroke();
   }
 };

@@ -1,4 +1,4 @@
-import { addYearToChart } from "./chart";
+import { addYearToChart, drawAxis } from "./chart";
 import { addYearToTimeline } from "./timeline";
 import { aggregatedYearlyTemps, rawYearlyTemps } from "./types";
 
@@ -27,11 +27,14 @@ const main = async () => {
   const rawData = await fetchData();
   const aggregatedData = aggregateData(rawData);
 
+  drawAxis();
+  // NEXT: commit and change this to index loop
+  // add yeartochart for 0, then in loop addcahrt(i), addtimeline(i-1)
   for (const year of aggregatedData) {
     await addYear(year);
   }
-  // await addYear(aggregatedData[0]);
-  // await addYear(aggregatedData[1]);
+  await addYear(aggregatedData[0]);
+  await addYear(aggregatedData[1]);
 };
 
 const addYear = async (yearData: aggregatedYearlyTemps) => {
