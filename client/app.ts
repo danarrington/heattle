@@ -1,4 +1,4 @@
-import { addYearToChart, drawAxis } from "./chart";
+import { addYearToChart, animateExistingBarsOffChart, drawAxis } from "./chart";
 import { addYearToTimeline } from "./timeline";
 import { aggregatedYearlyTemps, rawYearlyTemps } from "./types";
 
@@ -25,20 +25,19 @@ const fetchData = async () => {
 
 const main = async () => {
   const rawData = await fetchData();
-  const aggregatedData = aggregateData(rawData);
+  const yearlyData = aggregateData(rawData);
 
   drawAxis();
-  // NEXT: commit and change this to index loop
-  // add yeartochart for 0, then in loop addcahrt(i), addtimeline(i-1)
-  for (const year of aggregatedData) {
-    await addYear(year);
-  }
-  await addYear(aggregatedData[0]);
-  await addYear(aggregatedData[1]);
-};
 
-const addYear = async (yearData: aggregatedYearlyTemps) => {
-  await Promise.all([addYearToChart(yearData), addYearToTimeline(yearData)]);
+  await addYearToChart(yearlyData[0]);
+
+  for (let i = 1; i < yearlyData.length; i++) {
+    await Promise.all([
+      addYearToChart(yearlyData[i]), // TODO: fix last fencepost
+      addYearToTimeline(yearlyData[i - 1]),
+    ]);
+  }
+  await addYearToTimeline(yearlyData[yearlyData.length - 1]);
 };
 
 const aggregateData = (rawData: rawYearlyTemps[]): aggregatedYearlyTemps[] => {

@@ -20,7 +20,7 @@ export const addYearToChart = async ({
     if (bar) animatedBars.push(bar);
   }
 
-  animateExistingBarsOffChart(existingBars);
+  animateExistingBarsOffChart();
 
   await animateShapes({
     shapes: [...animatedBars, ...existingBars],
@@ -66,9 +66,9 @@ const buildTempBar = (temp: number, count: number): AnimateableShape | void => {
   };
 };
 
-const animateExistingBarsOffChart = (bars: AnimateableShape[]) => {
+export const animateExistingBarsOffChart = () => {
   const { axisPadding, height: chartHeight } = CHART_CONFIG;
-  for (const bar of bars) {
+  for (const bar of existingBars) {
     bar.y0 = bar.y1;
     bar.y1 = chartHeight - axisPadding;
   }

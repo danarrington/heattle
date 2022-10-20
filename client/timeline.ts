@@ -13,9 +13,10 @@ export const addYearToTimeline = async ({
   const shape = buildTimelineShape(year, aggregatedTemps);
   for (const shape of timelineShapes) {
     shape.y0 = shape.y1;
-    shape.y1 += 20;
+    shape.y1 += 15;
   }
   timelineShapes.push(shape);
+  await new Promise((r) => setTimeout(r, 300));
   await animateShapes({ shapes: timelineShapes, durationMs: 100, canvas });
 };
 
@@ -25,7 +26,7 @@ const buildTimelineShape = (
 ): AnimateableShape => {
   const x = 35; //TODO
   const y0 = -20;
-  const y1 = 20;
+  const y1 = 10;
   const { colors } = CHART_CONFIG;
 
   return {
