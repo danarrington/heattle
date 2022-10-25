@@ -4,10 +4,10 @@
   "description": "Data Visualization of Hot Days over time",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild ./client/app.ts --bundle --outfile=./static/app.js",
+    "dev": "node ./server.js",
     "process": "ts-node ./data/processData.ts",
-    "build": "esbuild ./client/app.ts --bundle --outfile=./static/app.js --watch",
-    "dev": "node ./server.js"
+    "start": "node ./server.js"
   },
   "author": "Dan Arrington",
   "license": "ISC",
